@@ -222,23 +222,29 @@ class Board:
                 row_placer -= 1
 
     def push_left(self):
+        # Outer for loop will iterate through each row
         for i in range(len(self.board)):
             col_counter = 0
             queue = Queue()
             while col_counter < 4:
+                # While loop iterates through columns
                 if self.board[i][col_counter] is None:
                     col_counter += 1
                 else:
+                    # Numbers are added to the queue and removed from the board
                     queue.enqueue(self.board[i][col_counter])
                     self.board[i][col_counter] = None
                     col_counter += 1
+            # Elements are combined
             queue.combine()
             col_placer = 0
             while not queue.is_empty():
+                # Newly combined elements are added from left to right in each row
                 self.board[i][col_placer] = queue.dequeue()
                 col_placer += 1
 
     def push_right(self):
+        # Same as the push up function but ierates from right to left
         for i in range(len(self.board)):
             col_counter = 3
             queue = Queue()
@@ -256,11 +262,11 @@ class Board:
                 col_placer -= 1
 
     def __str__(self):
+        # The string method for the board object makes the 4x4 array but represents each number in a different color
         buildString = ""
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
                 value = self.board[i][j]
-                # Find a way to do switch statements
                 if value is None:
                     buildString += "  -  "
                 elif value == 2:
@@ -289,17 +295,22 @@ class Board:
         return buildString
 
     def game_over(self):
+        # Iterates through each element of the 2D array to look for how many spaces are occupied or 2048
         num_counter = 0
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
                 if self.board[i][j] == 2048:
+                    # If 2048 is found then the player won the game
                     self.win_flag = True
                 elif self.board[i][j] is not None and self.board[i][j] != 2048:
                     num_counter += 1
         if num_counter == 16:
+            # If there are 16 occupied spaces on the board then the player lost
             self.lose_flag = True
         return self.win_flag or self.lose_flag
 
+    # Getters to find if the player won or lost the game
+    
     def get_lose_flag(self):
         return self.lose_flag
 
@@ -308,6 +319,7 @@ class Board:
 
 
 if __name__ == "__main__":
+    # Board and turn counter are instantiated
     board = Board()
     turn_counter = 1
     print("Welcome to 2048!")
@@ -315,13 +327,17 @@ if __name__ == "__main__":
         "The goal of this game is to combine numbers to make 2048 by sliding tiles on the board."
     )
     board.initialize_board()
+    # Loop will only iterate until the player wins or loses
     while not board.game_over():
         print()
         print(f"Turn {turn_counter}")
         print(board)
+        # Player gives a direction of left, right, up or down
         print("Choose a direction (U, D, L, or R).")
         direction = input()
         direction.strip()
+        # If the direction the player input does not properly match one of those, then they re-enter a direction
+        # until it is correct
         while (
             direction != "U"
             and direction != "D"
@@ -331,6 +347,7 @@ if __name__ == "__main__":
             print("Invalid direction typed. Please try again (U, D, L, or R).")
             direction = input()
             direction.strip()
+        # The numbers on the board will then be pushed the selected direction using the push methods
         if direction == "U":
             board.push_up()
         elif direction == "D":
@@ -342,6 +359,7 @@ if __name__ == "__main__":
         board.add_num()
         turn_counter += 1
     print(board)
+    # A message is given corresponding to if the player won or lost
     if board.get_lose_flag():
         print("You lose!")
     elif board.get_win_flag():
